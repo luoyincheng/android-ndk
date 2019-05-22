@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -36,6 +37,7 @@ public class Plasma extends Activity
         Display display = getWindowManager().getDefaultDisplay();
         Point displaySize = new Point();
         display.getSize(displaySize);
+        Log.i("Plasma",displaySize.toString());
         setContentView(new PlasmaView(this, displaySize.x, displaySize.y));
     }
 
@@ -46,15 +48,14 @@ public class Plasma extends Activity
 }
 
 // Custom view for rendering plasma.
-//
-// Note: suppressing lint wrarning for ViewConstructor since it is
+// Note: suppressing lint warning for ViewConstructor since it is
 //       manually set from the activity and not used in any layout.
 @SuppressLint("ViewConstructor")
 class PlasmaView extends View {
     private Bitmap mBitmap;
     private long mStartTime;
 
-    // implementend by libplasma.so
+    // implemented by libPlasma.so
     private static native void renderPlasma(Bitmap  bitmap, long time_ms);
 
     public PlasmaView(Context context, int width, int height) {
