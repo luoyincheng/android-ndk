@@ -16,6 +16,7 @@
  */
 #ifndef NATIVE_AUDIO_ANDROID_DEBUG_H_H
 #define NATIVE_AUDIO_ANDROID_DEBUG_H_H
+
 #include <android/log.h>
 
 #if 1

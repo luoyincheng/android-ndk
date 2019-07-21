@@ -24,6 +24,7 @@
  */
 static const int32_t kFloatToIntMapFactor = 128;
 static const uint32_t kMsPerSec = 1000;
+
 /**
  * Constructor for AudioDelay
  * @param sampleRate
@@ -34,19 +35,19 @@ static const uint32_t kMsPerSec = 1000;
 AudioDelay::AudioDelay(int32_t sampleRate, int32_t channelCount,
                        SLuint32 format, size_t delayTimeInMs,
                        float decayWeight)
-    : AudioFormat(sampleRate, channelCount, format),
-      delayTime_(delayTimeInMs),
-      decayWeight_(decayWeight) {
-  feedbackFactor_ = static_cast<int32_t>(decayWeight_ * kFloatToIntMapFactor);
-  liveAudioFactor_ = kFloatToIntMapFactor - feedbackFactor_;
-  allocateBuffer();
+        : AudioFormat(sampleRate, channelCount, format),
+          delayTime_(delayTimeInMs),
+          decayWeight_(decayWeight) {
+    feedbackFactor_ = static_cast<int32_t>(decayWeight_ * kFloatToIntMapFactor);
+    liveAudioFactor_ = kFloatToIntMapFactor - feedbackFactor_;
+    allocateBuffer();
 }
 
 /**
  * Destructor
  */
 AudioDelay::~AudioDelay() {
-  if (buffer_) delete static_cast<uint8_t*>(buffer_);
+    if (buffer_) delete static_cast<uint8_t *>(buffer_);
 }
 
 /**
@@ -55,18 +56,18 @@ AudioDelay::~AudioDelay() {
  * @return true if delay time is set successfully
  */
 bool AudioDelay::setDelayTime(size_t delayTimeInMS) {
-  if (delayTimeInMS == delayTime_) return true;
+    if (delayTimeInMS == delayTime_) return true;
 
-  std::lock_guard<std::mutex> lock(lock_);
+    std::lock_guard<std::mutex> lock(lock_);
 
-  if (buffer_) {
-    delete static_cast<uint8_t*>(buffer_);
-    buffer_ = nullptr;
-  }
+    if (buffer_) {
+        delete static_cast<uint8_t *>(buffer_);
+        buffer_ = nullptr;
+    }
 
-  delayTime_ = delayTimeInMS;
-  allocateBuffer();
-  return buffer_ != nullptr;
+    delayTime_ = delayTimeInMS;
+    allocateBuffer();
+    return buffer_ != nullptr;
 }
 
 /**
@@ -76,28 +77,28 @@ bool AudioDelay::setDelayTime(size_t delayTimeInMS) {
  *  - configure bufSize_ to be size of audioFrames
  */
 void AudioDelay::allocateBuffer(void) {
-  float floatDelayTime = (float)delayTime_ / kMsPerSec;
-  float fNumFrames = floatDelayTime * (float)sampleRate_ / kMsPerSec;
-  size_t sampleCount = static_cast<uint32_t>(fNumFrames + 0.5f) * channelCount_;
+    float floatDelayTime = (float) delayTime_ / kMsPerSec;
+    float fNumFrames = floatDelayTime * (float) sampleRate_ / kMsPerSec;
+    size_t sampleCount = static_cast<uint32_t>(fNumFrames + 0.5f) * channelCount_;
 
-  uint32_t bytePerSample = format_ / 8;
-  assert(bytePerSample <= 4 && bytePerSample);
+    uint32_t bytePerSample = format_ / 8;
+    assert(bytePerSample <= 4 && bytePerSample);
 
-  uint32_t bytePerFrame = channelCount_ * bytePerSample;
+    uint32_t bytePerFrame = channelCount_ * bytePerSample;
 
-  // get bufCapacity in bytes
-  bufCapacity_ = sampleCount * bytePerSample;
-  bufCapacity_ =
-      ((bufCapacity_ + bytePerFrame - 1) / bytePerFrame) * bytePerFrame;
+    // get bufCapacity in bytes
+    bufCapacity_ = sampleCount * bytePerSample;
+    bufCapacity_ =
+            ((bufCapacity_ + bytePerFrame - 1) / bytePerFrame) * bytePerFrame;
 
-  buffer_ = new uint8_t[bufCapacity_];
-  assert(buffer_);
+    buffer_ = new uint8_t[bufCapacity_];
+    assert(buffer_);
 
-  memset(buffer_, 0, bufCapacity_);
-  curPos_ = 0;
+    memset(buffer_, 0, bufCapacity_);
+    curPos_ = 0;
 
-  // bufSize_ is in Frames ( not samples, not bytes )
-  bufSize_ = bufCapacity_ / bytePerFrame;
+    // bufSize_ is in Frames ( not samples, not bytes )
+    bufSize_ = bufCapacity_ / bytePerFrame;
 }
 
 size_t AudioDelay::getDelayTime(void) const { return delayTime_; }
@@ -110,11 +111,11 @@ size_t AudioDelay::getDelayTime(void) const { return delayTime_; }
  * for performance purpose
  */
 void AudioDelay::setDecayWeight(float weight) {
-  if (weight > 0.0f && weight < 1.0f) {
-    float feedback = (weight * kFloatToIntMapFactor + 0.5f);
-    feedbackFactor_ = static_cast<int32_t>(feedback);
-    liveAudioFactor_ = kFloatToIntMapFactor - feedbackFactor_;
-  }
+    if (weight > 0.0f && weight < 1.0f) {
+        float feedback = (weight * kFloatToIntMapFactor + 0.5f);
+        feedbackFactor_ = static_cast<int32_t>(feedback);
+        liveAudioFactor_ = kFloatToIntMapFactor - feedbackFactor_;
+    }
 }
 
 float AudioDelay::getDecayWeight(void) const { return decayWeight_; }
@@ -129,42 +130,42 @@ float AudioDelay::getDecayWeight(void) const { return decayWeight_; }
  * @param channelCount for liveAudio, must be 2 for stereo
  * @param numFrames is length of liveAudio in Frames ( not in byte )
  */
-void AudioDelay::process(int16_t* liveAudio, int32_t numFrames) {
-  if (feedbackFactor_ == 0 || bufSize_ < numFrames) {
-    return;
-  }
+void AudioDelay::process(int16_t *liveAudio, int32_t numFrames) {
+    if (feedbackFactor_ == 0 || bufSize_ < numFrames) {
+        return;
+    }
 
-  if (!lock_.try_lock()) {
-    return;
-  }
+    if (!lock_.try_lock()) {
+        return;
+    }
 
-  if (numFrames + curPos_ > bufSize_) {
-    curPos_ = 0;
-  }
+    if (numFrames + curPos_ > bufSize_) {
+        curPos_ = 0;
+    }
 
-  // process every sample
-  int32_t sampleCount = channelCount_ * numFrames;
-  int16_t* samples = &static_cast<int16_t*>(buffer_)[curPos_ * channelCount_];
-  for (size_t idx = 0; idx < sampleCount; idx++) {
+    // process every sample
+    int32_t sampleCount = channelCount_ * numFrames;
+    int16_t *samples = &static_cast<int16_t *>(buffer_)[curPos_ * channelCount_];
+    for (size_t idx = 0; idx < sampleCount; idx++) {
 #if 1
-    int32_t curSample =
-        (samples[idx] * feedbackFactor_ + liveAudio[idx] * liveAudioFactor_) /
-        kFloatToIntMapFactor;
-    if (curSample > SHRT_MAX)
-      curSample = SHRT_MAX;
-    else if (curSample < SHRT_MIN)
-      curSample = SHRT_MIN;
- 
-    liveAudio[idx] = samples[idx];
-    samples[idx] = static_cast<int16_t>(curSample);
-#else
-    // Pure delay
-    int16_t tmp = liveAudio[idx];
-    liveAudio[idx] = samples[idx];
-    samples[idx] = tmp;
-#endif
-  }
+        int32_t curSample =
+                (samples[idx] * feedbackFactor_ + liveAudio[idx] * liveAudioFactor_) /
+                kFloatToIntMapFactor;
+        if (curSample > SHRT_MAX)
+            curSample = SHRT_MAX;
+        else if (curSample < SHRT_MIN)
+            curSample = SHRT_MIN;
 
-  curPos_ += numFrames;
-  lock_.unlock();
+        liveAudio[idx] = samples[idx];
+        samples[idx] = static_cast<int16_t>(curSample);
+#else
+        // Pure delay
+        int16_t tmp = liveAudio[idx];
+        liveAudio[idx] = samples[idx];
+        samples[idx] = tmp;
+#endif
+    }
+
+    curPos_ += numFrames;
+    lock_.unlock();
 }

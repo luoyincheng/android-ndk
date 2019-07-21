@@ -23,15 +23,15 @@ extern "C" {
 #endif
 
 JNIEXPORT void JNICALL Java_com_google_sample_echo_MainActivity_createSLEngine(
-    JNIEnv *env, jclass, jint, jint, jlong delayInMs, jfloat decay);
+        JNIEnv *env, jclass, jint, jint, jlong delayInMs, jfloat decay);
 JNIEXPORT void JNICALL Java_com_google_sample_echo_MainActivity_deleteSLEngine(
-    JNIEnv *env, jclass type);
+        JNIEnv *env, jclass type);
 JNIEXPORT jboolean JNICALL
 Java_com_google_sample_echo_MainActivity_createSLBufferQueueAudioPlayer(
-    JNIEnv *env, jclass);
+        JNIEnv *env, jclass);
 JNIEXPORT void JNICALL
 Java_com_google_sample_echo_MainActivity_deleteSLBufferQueueAudioPlayer(
-    JNIEnv *env, jclass type);
+        JNIEnv *env, jclass type);
 
 JNIEXPORT jboolean JNICALL
 Java_com_google_sample_echo_MainActivity_createAudioRecorder(JNIEnv *env,

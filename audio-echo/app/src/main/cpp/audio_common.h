@@ -38,23 +38,24 @@
 #define BUF_COUNT 16
 
 struct SampleFormat {
-  uint32_t sampleRate_;
-  uint32_t framesPerBuf_;
-  uint16_t channels_;
-  uint16_t pcmFormat_;  // 8 bit, 16 bit, 24 bit ...
-  uint32_t representation_;  // android extensions
+    uint32_t sampleRate_;
+    uint32_t framesPerBuf_;
+    uint16_t channels_;
+    uint16_t pcmFormat_;  // 8 bit, 16 bit, 24 bit ...
+    uint32_t representation_;  // android extensions
 };
-extern void ConvertToSLSampleFormat(SLAndroidDataFormat_PCM_EX* pFormat,
-                                    SampleFormat* format);
+
+extern void ConvertToSLSampleFormat(SLAndroidDataFormat_PCM_EX *pFormat,
+                                    SampleFormat *format);
 
 /*
  * GetSystemTicks(void):  return the time in micro sec
  */
 __inline__ uint64_t GetSystemTicks(void) {
-  struct timeval Time;
-  gettimeofday(&Time, NULL);
+    struct timeval Time;
+    gettimeofday(&Time, NULL);
 
-  return (static_cast<uint64_t>(1000000) * Time.tv_sec + Time.tv_usec);
+    return (static_cast<uint64_t>(1000000) * Time.tv_sec + Time.tv_usec);
 }
 
 #define SLASSERT(x)                   \
@@ -69,7 +70,8 @@ __inline__ uint64_t GetSystemTicks(void) {
 #define ENGINE_SERVICE_MSG_KICKSTART_PLAYER 1
 #define ENGINE_SERVICE_MSG_RETRIEVE_DUMP_BUFS 2
 #define ENGINE_SERVICE_MSG_RECORDED_AUDIO_AVAILABLE 3
-typedef bool (*ENGINE_CALLBACK)(void* pCTX, uint32_t msg, void* pData);
+
+typedef bool (*ENGINE_CALLBACK)(void *pCTX, uint32_t msg, void *pData);
 
 /*
  * flag to enable file dumping
