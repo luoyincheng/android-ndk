@@ -37,6 +37,8 @@ import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
+import java.util.logging.Logger;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -83,7 +85,7 @@ class GL2JNIView extends GLSurfaceView {
 		 * is interpreted as any 32-bit surface with alpha by SurfaceFlinger.
 		 */
 		if (translucent) {
-			this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+			this.getHolder().setFormat(PixelFormat.OPAQUE);
 		}
 
 		/* Setup the context factory for 2.0 rendering.
@@ -129,6 +131,14 @@ class GL2JNIView extends GLSurfaceView {
 	}
 
 	private static class ConfigChooser implements GLSurfaceView.EGLConfigChooser {
+		// Subclasses can adjust these values:
+		protected int mRedSize;
+		protected int mGreenSize;
+		protected int mBlueSize;
+		protected int mAlphaSize;
+		protected int mDepthSize;
+		protected int mStencilSize;
+		private int[] mValue = new int[1];
 
 		public ConfigChooser(int r, int g, int b, int a, int depth, int stencil) {
 			mRedSize = r;
@@ -310,16 +320,8 @@ class GL2JNIView extends GLSurfaceView {
 				}
 			}
 		}
-
-		// Subclasses can adjust these values:
-		protected int mRedSize;
-		protected int mGreenSize;
-		protected int mBlueSize;
-		protected int mAlphaSize;
-		protected int mDepthSize;
-		protected int mStencilSize;
-		private int[] mValue = new int[1];
 	}
+	static int count = 0;
 
 	private static class Renderer implements GLSurfaceView.Renderer {
 		public void onDrawFrame(GL10 gl) {
@@ -327,6 +329,7 @@ class GL2JNIView extends GLSurfaceView {
 		}
 
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
+			Log.i("lyxLog","onSurfaceChanged");
 			GL2JNILib.init(width, height);
 		}
 

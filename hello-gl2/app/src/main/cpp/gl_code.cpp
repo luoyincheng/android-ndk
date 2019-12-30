@@ -35,8 +35,7 @@ static void printGLString(const char *name, GLenum s) {
 }
 
 static void checkGlError(const char *op) {
-    for (GLint error = glGetError(); error; error
-                                                    = glGetError()) {
+    for (GLint error = glGetError(); error; error = glGetError()) {
         LOGI("after %s() glError (0x%x)\n", op, error);
     }
 }
@@ -146,12 +145,7 @@ const GLfloat gTriangleVertices[] = {0.0f, 0.5f, -0.5f, -0.5f,
                                      0.5f, -0.5f};
 
 void renderFrame() {
-    static float grey;
-    grey += 0.01f;
-    if (grey > 1.0f) {
-        grey = 0.0f;
-    }
-    glClearColor(grey, grey, grey, 1.0f);
+    glClearColor(0.5F, 0.2F, 0.9F, 1.0f);
     checkGlError("glClearColor");
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
@@ -169,15 +163,15 @@ void renderFrame() {
 
 extern "C" {
 JNIEXPORT void JNICALL
-Java_com_android_gl2jni_GL2JNILib_init(JNIEnv *env, jobject obj, jint width, jint height);
-JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv *env, jobject obj);
+Java_com_android_gl2jni_GL2JNILib_init(JNIEnv *env, jclass obj, jint width, jint height);
+JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv *env, jclass obj);
 };
 
 JNIEXPORT void JNICALL
-Java_com_android_gl2jni_GL2JNILib_init(JNIEnv *env, jobject obj, jint width, jint height) {
+Java_com_android_gl2jni_GL2JNILib_init(JNIEnv *env, jclass obj, jint width, jint height) {
     setupGraphics(width, height);
 }
 
-JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv *env, jclass obj) {
     renderFrame();
 }
